@@ -1,0 +1,20 @@
+Message stats for scenario Reality-MeanBuffer
+sim_time: 8490908.0000
+created: 7061
+started: 61
+relayed: 52
+aborted: 9
+dropped: 6120
+removed: 0
+delivered: 0
+delivery_prob: 0.0000
+response_prob: 0.0000
+overhead_ratio: NaN
+latency_avg: NaN
+latency_med: NaN
+hopcount_avg: NaN
+hopcount_med: 0
+buffertime_avg: 1206914.7531
+buffertime_med: 1209570.0000
+rtt_avg: NaN
+rtt_med: NaN

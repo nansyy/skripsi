@@ -1,0 +1,20 @@
+Message stats for scenario Haggle3-Infocom5
+sim_time: 274883.0000
+created: 845
+started: 167
+relayed: 160
+aborted: 7
+dropped: 782
+removed: 0
+delivered: 7
+delivery_prob: 0.0083
+response_prob: 0.0000
+overhead_ratio: 21.8571
+latency_avg: 9379.5714
+latency_med: 6636.0000
+hopcount_avg: 2.1429
+hopcount_med: 2
+buffertime_avg: 84456.2123
+buffertime_med: 86363.0000
+rtt_avg: NaN
+rtt_med: NaN

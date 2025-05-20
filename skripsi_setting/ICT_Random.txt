@@ -1,0 +1,61 @@
+# Scenario simulasi estimasi jumlah node menggunakan metode Inter-Contact Time
+Scenario.name = ICT_Random
+Scenario.simulateConnections = true
+Scenario.updateInterval = 1
+
+# Waktu simulasi - 2 hari
+Scenario.endTime = 172800
+
+
+btInterface.type = SimpleBroadcastInterface
+btInterface.transmitSpeed = 250k
+btInterface.transmitRange = 10
+
+Scenario.nrofHostGroups = 1
+
+# Pengaturan routing
+Group.router = skripsi.SnWskripsi_AR
+SnWskripsi_AR.binaryMode = true
+#Group.router = DecisionEngineRouter
+#DecisionEngineRouter.decisionEngine = skripsi.EstimasiNode
+#DecisionEngineRouter.binaryMode = true
+#DecisionEngineRouter.nrofHosts = 100
+
+# Definisi node (misalnya untuk kendaraan dan manusia)
+Group.movementModel = RandomWaypoint
+
+# Pengaturan tambahan
+Group.nrofInterfaces = 1
+Group.interface1 = btInterface
+Group.msgTtl = 1440
+Group.bufferSize = 10M
+Group.nrofHosts = 100
+Group.waitTime = 10, 30
+Group.speed = 5.5, 10.0
+#Group.nodeLocation = 10, 10
+Group.transmitRange = 100
+Group1.groupID = node
+
+# Event Message creation parameters
+Events.nrof = 1
+Events1.class = MessageEventGenerator
+#Events.startTime = 100
+#Events.endTime = 48000
+Events1.interval = 290, 310
+Events1.size = 10k
+Events1.hosts = 0,99
+
+## Movement model
+MovementModel.rngSpeed = 1
+MovementModel.worldSize = 1000, 1000
+MovementModel.warmup = 1000
+
+
+# Statistik output
+Report.nrofReports = 2
+Report.reportDir = reports/skripsi
+
+Report.report1 = skripsi.AvgConvergenceCounting
+Report.report2 = skripsi.MovementStartTimeReport
+#Report.report3 = skripsi.ConvergenceTime
+#Report.report4 = skripsi.Residu

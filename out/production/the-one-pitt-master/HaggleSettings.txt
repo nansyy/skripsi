@@ -30,10 +30,11 @@ Scenario.nrofHostGroups = 1
 # Router
 Group.movementModel = RandomWalk
 #Group.router =skripsi.SnWskripsi_AR
-Group.router =SprayAndWaitRouter
-#Group.router = DecisionEngineRouter
+#Group.router =SprayAndWaitRouter
+Group.router = DecisionEngineRouter
 #ProphetRouter.secondsInTimeUnit = 30
 #DecisionEngineRouter.decisionEngine = skripsi.SnWskripsi_RDE
+DecisionEngineRouter.decisionEngine = skripsi.Estimasi1
 #DecisionEngineRouter.decisionEngine = fuzzy.FuzzyBasedRouter
 #DecisionEngineRouter.fclSimilarity = fcl/Haggle3-Infocom5.fcl
 
@@ -77,7 +78,6 @@ Events1.filePath = Haggle3-Infocom5.csv
 
 Events2.class = MessageEventGenerator
 # change interval to have more or less messages, see javadocs for more information.
-
 Events2.interval = 290, 310
 
 # 25, 30 (~120 texts/hour)

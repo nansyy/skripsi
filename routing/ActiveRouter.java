@@ -79,7 +79,13 @@ public abstract class ActiveRouter extends MessageRouter {
 	 * anything but subclasses may want to override this.
 	 */
 	//@Override
-	public void changedConnection(Connection con) { }
+	public void changedConnection(Connection con) {
+		if (con.isUp()) {
+			connectionUp(con);
+		} else {
+			connectionDown(con);
+		}
+	}
 	
 	public void connectionUp(Connection con){}
 

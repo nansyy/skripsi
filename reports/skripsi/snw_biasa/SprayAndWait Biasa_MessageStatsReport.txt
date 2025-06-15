@@ -1,0 +1,20 @@
+Message stats for scenario SprayAndWait Biasa
+sim_time: 172800.0000
+created: 577
+started: 40101
+relayed: 40095
+aborted: 6
+dropped: 23722
+removed: 0
+delivered: 518
+delivery_prob: 0.8977
+response_prob: 0.0000
+overhead_ratio: 76.4035
+latency_avg: 15896.2799
+latency_med: 14190.0000
+hopcount_avg: 3.7490
+hopcount_med: 4
+buffertime_avg: 62406.9753
+buffertime_med: 69435.0000
+rtt_avg: NaN
+rtt_med: NaN

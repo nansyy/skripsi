@@ -1,0 +1,74 @@
+Scenario.name = SprayAndWait Biasa
+Group.router = SprayAndWaitRouter
+SprayAndWaitRouter.nrofCopies = 95
+SprayAndWaitRouter.binaryMode = true
+
+Scenario.simulateConnections = true
+Scenario.updateInterval = 1
+
+# Waktu simulasi - 2 hari
+Scenario.endTime = 172800
+Scenario.worldSize = 1000, 1000
+
+btInterface.type = SimpleBroadcastInterface
+btInterface.transmitSpeed = 250k
+#btInterface.transmitRange = 10
+btInterface.transmitRange = 10
+
+Scenario.nrofHostGroups = 1
+
+
+# Definisi node (misalnya untuk kendaraan dan manusia)
+Group.movementModel = RandomWalk
+
+# Pengaturan tambahan
+Group.nrofInterfaces = 1
+Group.interface1 = btInterface
+Group.msgTtl = 1440
+Group.bufferSize = 10M
+Group.nrofHosts = 100
+Group.waitTime = 10, 30
+Group.speed = 0.5, 1.5
+#Group.nodeLocation = 10, 10
+Group.transmitRange = 10
+Group1.groupID = node
+Group1.okMaps = 1
+
+# Event Message creation parameters
+Events.nrof = 1
+Events1.class = MessageEventGenerator
+#Events.startTime = 100
+#Events.endTime = 48000
+Events1.interval = 290, 310
+Events1.size = 10k
+Events1.hosts = 0,99
+
+## Movement model
+MovementModel.rngSpeed = 1
+MovementModel.worldSize = 1500,1000
+MovementModel.warmup = 1000
+MapBasedMovement.mapFile1 = data/HelsinkiMedium/roads.wkt
+
+# Statistik output
+Report.nrofReports = 1
+Report.reportDir = reports/skripsi/snw_biasa
+
+Report.report1 = MessageStatsReport
+
+
+
+## GUI settings
+
+# GUI underlay image settings
+#GUI.UnderlayImage.fileName = data/helsinki_underlay.png
+# Image offset in pixels (x, y)
+#GUI.UnderlayImage.offset = 64, 20
+# Scaling factor for the image
+#GUI.UnderlayImage.scale = 4.75
+# Image rotation (radians)
+#GUI.UnderlayImage.rotate = -0.015
+
+# how many events to show in the log panel (default = 30)
+#GUI.EventLogPanel.nrofEvents = 200
+# Regular Expression log filter (see Pattern-class from the Java API for RE-matching details)
+#GUI.EventLogPanel.REfilter = .*p[1-9]<->p[1-9]$

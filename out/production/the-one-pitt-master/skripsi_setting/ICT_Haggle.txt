@@ -1,0 +1,90 @@
+# Skenario simulasi estimasi jumlah node menggunakan metode Inter-Contact Time
+
+Scenario.name = ICT_Haggle
+Scenario.simulateConnections = false
+Scenario.updateInterval = 1
+
+#Scenario.worldSize = 1000, 1000
+# Waktu simulasi - 3,1 hari
+Scenario.endTime = 274883
+
+# "Bluetooth" interface for all nodes
+    btInterface.type = SimpleBroadcastInterface
+    btInterface.transmitSpeed = 250k
+    btInterface.transmitRange = 1
+
+# Define 1 node groups
+Scenario.nrofHostGroups = 1
+
+## Router
+#Group.router = skripsi.SnWskripsi_AR
+#SnWskripsi_AR.binaryMode = true
+Group.router = DecisionEngineRouter
+DecisionEngineRouter.decisionEngine = skripsi.NodeEstimatorDE
+#DecisionEngineRouter.decisionEngine = skripsi.EstimasiBR
+#DecisionEngineRouter.decisionEngine = skripsi.Estimasi
+DecisionEngineRouter.binaryMode = true
+#DecisionEngineRouter.nrofCopies = [6; 48; 75; 97]
+
+
+## TTL 24 hours=1440, 1 week= 10080, 3 weeks= 30240
+Group.msgTtl = 1440
+Group.nrofInterfaces = 1
+Group.interface1 = btInterface
+## Buffer Size : 200 messages of 10 K ~ 2M
+Group.bufferSize = 10M
+Group.movementModel = StationaryMovement
+
+Group1.groupID = H
+Group1.waitTime = 0, 120
+Group1.speed = 0.5, 1.5
+Group1.nodeLocation = 10, 10
+Group1.nrofHosts = 41
+
+## Message creation parameters
+Events.nrof = 2
+
+## Trace information
+# Class of the first event generator
+Events1.class = ExternalEventsQueue
+Events1.filePath = Haggle3-Infocom5.csv
+Events1.select = Haggle3-Infocom5.csv
+
+
+# Class of the first event generator
+Events2.class = MessageEventGenerator
+
+## Message creation parameters 
+# (following settings are specific for the MessageEventGenerator class)
+# Creation interval in seconds (one new message every 25 to 35 seconds)
+Events2.interval = 290, 310
+
+# Message sizes (500kB - 1MB)
+Events2.size = 10k 
+
+# range of message source/destination addresses
+Events2.hosts = 0,40
+
+
+# Message ID prefix
+Events2.prefix = M
+
+## Movement model settings
+MovementModel.rngSeed = 2
+
+# World's size for Movement Models without implicit size (width, height; meters)
+MovementModel.worldSize = 200, 200
+#MovementModel.worldSize = 1000, 1000
+
+
+# How long time to move hosts in the world before real simulation
+MovementModel.warmup = 1000
+
+## Reports - all report names have to be valid report classes
+
+# Statistik output
+Report.nrofReports = 1
+Report.reportDir = reports/skripsi/haggle
+
+Report.report1 = skripsi.ConvergenceTime
+#Report.report2 = skripsi.MessageStatsReport

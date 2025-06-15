@@ -48,6 +48,11 @@ public class LocationAidedDecisionEngine implements RoutingDecisionEngine
 		return false;
 	}
 
+	@Override
+	public void update(DTNHost host) {
+
+	}
+
 	public boolean shouldDeleteSentMessage(Message m, DTNHost otherHost)
 	{
 		// TODO Auto-generated method stub

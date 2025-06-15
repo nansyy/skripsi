@@ -240,6 +240,11 @@ public class SnFDecisionEngine implements RoutingDecisionEngine
 		return de.isSubscriber(pubname);
 	}
 
+	@Override
+	public void update(DTNHost host) {
+
+	}
+
 	private SnFDecisionEngine getOtherSnFDecisionEngine(DTNHost h)
 	{
 		MessageRouter otherRouter = h.getRouter();

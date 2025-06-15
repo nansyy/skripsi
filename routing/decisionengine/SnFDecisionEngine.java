@@ -10,14 +10,13 @@ import java.util.*;
 
 import core.*;
 import routing.*;
-
 /**
  * An implementation of the Spray and Focus Routing protocol using the
  * Decision Engine framework.
  * 
  * @author PJ Dillon, University of Pittsburgh
  */
-public class SnFDecisionEngine implements RoutingDecisionEngine
+public class  SnFDecisionEngine implements RoutingDecisionEngine
 {
 	/** identifier for the initial number of copies setting ({@value})*/ 
 	public static final String NROF_COPIES_S = "nrofCopies";
@@ -132,6 +131,11 @@ public class SnFDecisionEngine implements RoutingDecisionEngine
 	public boolean shouldDeleteOldMessage(Message m, DTNHost hostReportingOld)
 	{
 		return m.getTo() == hostReportingOld;
+	}
+
+	@Override
+	public void update(DTNHost host) {
+
 	}
 
 	public boolean shouldDeleteSentMessage(Message m, DTNHost otherHost)

@@ -55,12 +55,11 @@ import routing.RoutingDecisionEngine;
  * @author PJ Dillon, University of Pittsburgh
  *
  */
-public class DistributedBubbleRap 
-				implements RoutingDecisionEngine, CommunityDetectionEngine
-{
+public class DistributedBubbleRap implements RoutingDecisionEngine,CommunityDetectionEngine{
+
 	/** Community Detection Algorithm to employ -setting id {@value} */
 	public static final String COMMUNITY_ALG_SETTING = "communityDetectAlg";
-	/** Centrality Computation Algorithm to employ -setting id {@value} */
+	/* * Centrality Computation Algorithm to employ -setting id {@value} */
 	public static final String CENTRALITY_ALG_SETTING = "centralityAlg";
 	
 	protected Map<DTNHost, Double> startTimestamps;
@@ -222,7 +221,12 @@ public class DistributedBubbleRap
 			!this.commumesWithHost(m.getTo());
 	}
 
-	public RoutingDecisionEngine replicate()
+    @Override
+    public void update(DTNHost host) {
+
+    }
+
+    public RoutingDecisionEngine replicate()
 	{
 		return new DistributedBubbleRap(this);
 	}

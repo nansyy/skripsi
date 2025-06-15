@@ -19,14 +19,12 @@ import java.util.Map;
 
 public class ConvergenceTime extends Report implements UpdateListener {
 
-    public static final int DEFAULT_WAKTU = 3600;
+    public static final int DEFAULT_WAKTU = 1800;
     public static final String NODE_PERWAKTU = "nodepersatuanwaktu";
     private double lastRecord = Double.MIN_VALUE;
     private int interval;
-    private double updateInterval = 0;
-    private static Map<DTNHost, ArrayList<Double>> estimasi = new HashMap<DTNHost, ArrayList<Double>>();
 
-    public ConvergenceTime(){
+    public ConvergenceTime() {
         super();
 
         Settings setting = getSettings();
@@ -34,63 +32,41 @@ public class ConvergenceTime extends Report implements UpdateListener {
         if (setting.contains(NODE_PERWAKTU)) {
             interval = setting.getInt(NODE_PERWAKTU);
         } else {
-            interval = -1;
-        }
-        if (interval < 0){
             interval = DEFAULT_WAKTU;
+
         }
     }
 
     @Override
     public void updated(List<DTNHost> hosts) {
-        double currentTime = SimClock.getTime();
-        if(isWarmup()){
-            return;
-        }
-        if ((currentTime - lastRecord >= interval)){
+        if (SimClock.getTime() - lastRecord >= interval) {
+            lastRecord = SimClock.getTime();
             printLine(hosts);
-            this.lastRecord = currentTime - currentTime % interval;
         }
     }
-//
+
+
     private void printLine(List<DTNHost> hosts) {
+
+        double totalEstimasi = 0;
+
         for (DTNHost h : hosts) {
             MessageRouter r = h.getRouter();
-            InterContactTime ict = null;
 
-            if (r instanceof DecisionEngineRouter){
-                RoutingDecisionEngine de = ((DecisionEngineRouter) r).getDecisionEngine();
-                ict = (InterContactTime) de;
-            }else if (r instanceof SnWskripsi_AR){
-                ict = (InterContactTime) r;
-            }else{
+
+            if (!(r instanceof DecisionEngineRouter))
                 continue;
-            }
+            RoutingDecisionEngine de = ((DecisionEngineRouter) r).getDecisionEngine();
+            InterContactTime ict = (InterContactTime) de;
 
-            ArrayList<Double> listNode = new ArrayList<>();
-
-            double temp = ict.getEstimation();
-            if(estimasi.containsKey(h)){
-                listNode = estimasi.get(h);
-                listNode.add(temp);
-                estimasi.put(h, listNode);
-            }else{
-                estimasi.put(h, listNode);
-            }
-          //  System.out.println("map estimasi di report residu: "+estimasi);
-
+           double temp = Math.abs(ict.getEstimation());
+           // double temp = ict.getEstimation();
+            totalEstimasi += temp;
         }
+        //double estimasi = totalEstimasi;
+        String output =  (int)SimClock.getTime() + "\t" + String.format("%.2f", totalEstimasi);;
+        write(output);
 
     }
 
-    public void done(){
-        for (Map.Entry<DTNHost, ArrayList<Double>> entry : estimasi.entrySet()){
-            String printHost = entry.getKey().getAddress() + "\t";
-            for (Double listEstimasi : entry.getValue()){
-                printHost = printHost + "\t" +listEstimasi;
-            }
-            write(printHost);
-        }
-        super.done();
-    }
 }

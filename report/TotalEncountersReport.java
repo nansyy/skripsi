@@ -10,6 +10,7 @@ import core.ConnectionListener;
 import core.DTNHost;
 import core.UpdateListener;
 
+
 /**
  * A report of the distribution of how many encounters (contacts) a node has had 
  * 
@@ -19,7 +20,7 @@ public class TotalEncountersReport extends Report implements ConnectionListener,
 	UpdateListener {
 
 	private int[] encounters;
-	
+
 	public TotalEncountersReport() {
 		
 	}

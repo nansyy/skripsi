@@ -6,6 +6,7 @@ package movement;
 
 import core.Coord;
 import core.Settings;
+import routing.RoutingDecisionEngine;
 
 /**
  * Random waypoint movement model. Creates zig-zag paths within the
@@ -55,6 +56,7 @@ public class RandomWaypoint extends MovementModel {
 	
 	@Override
 	public RandomWaypoint replicate() {
+
 		return new RandomWaypoint(this);
 	}
 	

@@ -35,6 +35,7 @@ public class DTNHost implements Comparable<DTNHost>, Iterable<Connection> {
 	private List<NetworkInterface> net;
 	private ModuleCommunicationBus comBus;
 
+
 	static {
 		DTNSim.registerForReset(DTNHost.class.getCanonicalName());
 		reset();
@@ -59,6 +60,7 @@ public class DTNHost implements Comparable<DTNHost>, Iterable<Connection> {
 		this.address = getNextAddress();
 		this.name = groupId+address;
 		this.net = new ArrayList<NetworkInterface>();
+
 
 		for (NetworkInterface i : interf) {
 			NetworkInterface ni = i.replicate();
@@ -136,7 +138,8 @@ public class DTNHost implements Comparable<DTNHost>, Iterable<Connection> {
 	public int getAddress() {
 		return this.address;
 	}
-	
+
+
 	/**
 	 * Returns this hosts's ModuleCommunicationBus
 	 * @return this hosts's ModuleCommunicationBus

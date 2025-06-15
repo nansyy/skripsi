@@ -174,6 +174,11 @@ public class LABELDecisionEngine
 		return true;
 	}
 
+	@Override
+	public void update(DTNHost host) {
+
+	}
+
 	public RoutingDecisionEngine replicate()
 	{
 		return new LABELDecisionEngine(this);

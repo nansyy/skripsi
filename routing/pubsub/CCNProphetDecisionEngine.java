@@ -131,6 +131,11 @@ public class CCNProphetDecisionEngine implements RoutingDecisionEngine
 		return false;
 	}
 
+	@Override
+	public void update(DTNHost host) {
+
+	}
+
 	public boolean isFinalDest(Message m, DTNHost aHost)
 	{
 		// TODO Auto-generated method stub

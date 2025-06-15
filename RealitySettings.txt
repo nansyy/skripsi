@@ -22,12 +22,13 @@ Scenario.nrofHostGroups = 1
 
 # Router
 Group.movementModel = StationaryMovement
-Group.router = skripsi.SnWskripsi_AR
-#Group.router = DecisionEngineRouter
+#Group.router = skripsi.SnWskripsi_AR
+Group.router = DecisionEngineRouter
 #ProphetRouter.secondsInTimeUnit = 30
+DecisionEngineRouter.decisionEngine = skripsi.SnWskripsi_RDE
 #DecisionEngineRouter.decisionEngine = EpidemicDecisionRouter
-DecisionEngineRouter.decisionEngine = fuzzy.FuzzyBasedRouter
-DecisionEngineRouter.fclSimilarity = fcl/Reality.fcl
+#DecisionEngineRouter.decisionEngine = fuzzy.FuzzyBasedRouter
+FDecisionEngineRouter.fclSimilarity = fcl/Reality.fcl
 
 Group.bufferSize = 30M
 # 10M Haggle3 - Infocom5

@@ -12,6 +12,7 @@ package movement;
 
 import core.Coord;
 import core.Settings;
+import routing.RoutingDecisionEngine;
 
 public class ClusterMovement extends RandomWaypoint {
 	/** Range of the cluster */

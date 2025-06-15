@@ -6,11 +6,7 @@ Scenario.updateInterval = 1
 
 # Waktu simulasi - 196,5 hari atau 6,4 bulan
 Scenario.endTime = 16981816
-    #Scenario.endTime = 115200
-    #987529 Haggle4 - Cam
-    #274883 Haggle3 infocome5
-    #16981816 Reality
-    #6413284 Sassy
+
 
 # "Bluetooth" interface for all nodes
     btInterface.type = SimpleBroadcastInterface
@@ -21,12 +17,15 @@ Scenario.endTime = 16981816
 Scenario.nrofHostGroups = 1
 
 ## Router
-Group.router = skripsi.SnWskripsi_AR
-SnWskripsi_AR.binaryMode = true
-#Group.router = DecisionEngineRouter
-#DecisionEngineRouter.decisionEngine = skripsi.Estimasi1
-#DecisionEngineRouter.binaryMode = true
+#Group.router = skripsi.SnWskripsi_AR
+#SnWskripsi_AR.binaryMode = true
+Group.router = DecisionEngineRouter
+#DecisionEngineRouter.decisionEngine = skripsi.Estimasi
+#DecisionEngineRouter.decisionEngine = skripsi.EstimasiBR
+DecisionEngineRouter.decisionEngine = skripsi.NodeEstimatorDE
+DecisionEngineRouter.binaryMode = true
 #DecisionEngineRouter.nrofCopies = [6; 48; 75; 97]
+
 
 ## TTL 24 hours=1440, 1 week= 10080, 3 weeks= 30240
 Group.msgTtl = 30240
@@ -36,11 +35,11 @@ Group.interface1 = btInterface
 Group.bufferSize = 20M
 Group.movementModel = StationaryMovement
 
-Group1.groupID = A
+Group1.groupID = R
 Group.waitTime = 0, 120
 Group.speed = 0.5, 1.5
 Group1.nodeLocation = 10, 10
-Group1.nrofHosts = 97
+Group.nrofHosts = 97
 
 ## Message creation parameters
 Events.nrof = 2
@@ -50,11 +49,7 @@ Events.nrof = 2
 Events1.class = ExternalEventsQueue
 Events1.filePath = RealityConnectionTraceFinal.txt
 Events1.select = RealityConnectionTraceFinal.txt
-    #Haggle4-Cam-Imote.csv
-    #Haggle3-Infocom5.csv
-    #Haggle6-infocom6.csv
-    #RealityConnectionTraceFinal.txt
-    #sassy.csv
+
 
 # Class of the first event generator
 Events2.class = MessageEventGenerator
@@ -69,9 +64,7 @@ Events2.size = 10k
 
 # range of message source/destination addresses
 Events2.hosts = 0,96
-    # 0, 35 Haggle4 - Cam
-    # 0,40 Haggle3 infocome5
-    # 0,96 Reality
+
 
 # Message ID prefix
 Events2.prefix = M
@@ -90,8 +83,8 @@ MovementModel.warmup = 1000
 
 # Statistik output
 Report.nrofReports = 1
-Report.reportDir = reports/skripsi
-#Report.report1 = skripsi.MessageStatsReport
-Report.report1 = skripsi.AvgConvergenceCounting
-#Report.report3 = skripsi.ConvergenceTime
-#Report.report4 = skripsi.Residu
+Report.reportDir = reports/skripsi/reality
+
+Report.report1 = skripsi.ConvergenceTime
+#Report.report2 = skripsi.MessageStatsReport
+

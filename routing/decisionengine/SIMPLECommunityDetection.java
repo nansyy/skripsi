@@ -220,6 +220,11 @@ public class SIMPLECommunityDetection implements RoutingDecisionEngine, Communit
 		return false;
 	}
 
+	@Override
+	public void update(DTNHost host) {
+
+	}
+
 	public RoutingDecisionEngine replicate()
 	{
 		return new SIMPLECommunityDetection(this);

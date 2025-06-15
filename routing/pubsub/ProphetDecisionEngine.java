@@ -254,7 +254,12 @@ public class ProphetDecisionEngine implements RoutingDecisionEngine
 		
 		return de.isSubscriber(pubname);
 	}
-	
+
+	@Override
+	public void update(DTNHost host) {
+
+	}
+
 	private ProphetDecisionEngine getOtherProphetDecisionEngine(DTNHost host)
 	{
 		MessageRouter otherRouter = host.getRouter();

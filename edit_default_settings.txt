@@ -53,7 +53,10 @@ Scenario.nrofHostGroups = 6
 
 # Common settings for all groups
 Group.movementModel = RandomWalk
-Group.router = skripsi.SnWskripsi_AR
+Group.router = DecisionEngineRouter
+#DecisionEngineRouter.decisionEngine = skripsi.SnWskripsi_RDE
+DecisionEngineRouter.decisionEngine = skripsi.Estimasi
+DecisionEngineRouter.nrofCopies = 15
 #Group.router = SprayAndWaitRouter
 #Group.router = FirstContactRouter
 Group.bufferSize = 10M

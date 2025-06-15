@@ -21,5 +21,22 @@ public class Duration
 	 * @param s Initial start value
 	 * @param e Initial end value
 	 */
-	public Duration(double s, double e) {start = s; end = e;}
+	public Duration(double s, double e) {
+		start = s; end = e;}
+
+	public double getStart(){
+		return start;
+	}
+	public double getEnd(){
+		return end;
+	}
+
+	public void setEnd(double end) {
+		this.end = end;
+	}
+
+	public void setStart(double start) {
+		this.start = start;
+	}
 }
+

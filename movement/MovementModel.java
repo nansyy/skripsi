@@ -217,6 +217,7 @@ public abstract class MovementModel {
 	 * @return The sim time when node should ask the next time for a path
 	 */
 	public double nextPathAvailable() {
+
 		return SimClock.getTime() + generateWaitTime();
 	}
 	

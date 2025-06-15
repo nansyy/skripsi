@@ -209,7 +209,12 @@ public class SnFDecisionEngine implements RoutingDecisionEngine
 		
 		return de.isFinalDest(m, null);
 	}
-	
+
+	@Override
+	public void update(DTNHost host) {
+
+	}
+
 	public boolean isFinalDest(Message m, DTNHost aHost)
 	{
 		for(ContentFilter f : mySubscriptions)

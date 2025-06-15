@@ -4,14 +4,15 @@ import java.util.*;
 
 import routing.*;
 import core.*;
+import routing.community.Duration;
 
 public class SnWskripsi_AR extends ActiveRouter implements InterContactTime {
 
     protected Map<DTNHost, Double> lastContactTime;
-    protected Map<DTNHost, Map<DTNHost, Double>> coupledNodesWithTime;
-    //protected Map<DTNHost, List<DTNHost>> coupledNode;
+    protected Map<DTNHost, Double> coupledNodesWithTime;
     protected ArrayList<Double> t1_samples;
     protected ArrayList<Double> t2_samples;
+    private double movementStartTime = 0;
     private double estimatedM;
     private double alpha;
     protected Coord initialLocation;
@@ -22,16 +23,19 @@ public class SnWskripsi_AR extends ActiveRouter implements InterContactTime {
     public static final String MSG_COUNT_PROPERTY = SPRAYANDWAIT_NS + "." + "copies";
     public static final String LIVE_INTERVAL = "live_interval";
 
-    private static double interval_live = 3600;
+    private double mixingTime = 1800;
+    private static double interval_live = 1800;
     private double intervalTime;
     private double lastInterval = 0;
     protected int initialNrofCopies;
     protected boolean isBinary;
-    protected int totalNode;
+    // int totalNode;
+    protected double lastMeetingTime;
     private Map<DTNHost, Boolean> hasMetAnyNode;
     List<DTNHost> hostOrder;
     private boolean hasMoved = false;
-    private double movementStartTime = 0;
+
+    public Map<DTNHost, List<Double>> estimasiPerNode;
 
 
     public SnWskripsi_AR(Settings s) {
@@ -53,25 +57,21 @@ public class SnWskripsi_AR extends ActiveRouter implements InterContactTime {
         } else {
             intervalTime = interval_live;
         }
-        totalNode = s.getInt("nrofHosts");
-        //coupledNode = new HashMap<>();
         t1_samples = new ArrayList<>();
         t2_samples = new ArrayList<>();
         lastContactTime = new HashMap<>();
-        coupledNodesWithTime = new HashMap<>();
-    }
 
+    }
     public SnWskripsi_AR(SnWskripsi_AR proto) {
         super(proto);
         this.initialNrofCopies = proto.initialNrofCopies;
         this.isBinary = proto.isBinary;
-        // coupledNode = new HashMap<>();
         this.t1_samples = new ArrayList<>();
         this.t2_samples = new ArrayList<>();
         this.lastContactTime = new HashMap<>();
-        this.hasMetAnyNode = new HashMap<>();
         hostOrder = new ArrayList<>();
         this.coupledNodesWithTime = new HashMap<>();
+        this.estimasiPerNode = new HashMap<>();
 
     }
 
@@ -86,45 +86,31 @@ public class SnWskripsi_AR extends ActiveRouter implements InterContactTime {
         DTNHost peer = con.getOtherNode(thisHost);
         double currentTime = SimClock.getTime();
 
-        if (!coupledNodesWithTime.containsKey(thisHost)) {
-            coupledNodesWithTime.put(thisHost, new HashMap<>());
-        }
-        //List<DTNHost> ck = coupledNodesWithTime.get(thisHost);
-        Map<DTNHost, Double> ck = coupledNodesWithTime.get(thisHost);
-
-        //hapus node yang sudah melewati mixing time
-        Iterator<Map.Entry<DTNHost, Double>> iterator = ck.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<DTNHost, Double> entry = iterator.next();
-            if (currentTime - entry.getValue() > intervalTime) {
-                iterator.remove();
-            }
-        }
-        if (!ck.containsKey(peer)) {
-            // if (!hasMetAnyNode.getOrDefault(thisHost, false)) {
+        update();
+        if (!coupledNodesWithTime.containsKey(peer)) {
             if (!lastContactTime.containsKey(thisHost)) {
-                double t1 = currentTime - this.movementStartTime;
+                double t1 = currentTime - lastMeetingTime;
+                //t1_samples.add(t1);
                 t1_samples.add(t1);
-                hostOrder.add(thisHost);
-                //System.out.println(thisHost+" added t1 " + t1 + " at " + currentTime);
+               //  System.out.println(thisHost+" added t1 " + t1 );
+
             } else {
                 double lastContact = lastContactTime.get(thisHost);
                 double t2 = currentTime - lastContact;
-                // t2_samples.add(currentTime);
+                //t2_samples.add(t2);
                 t2_samples.add(t2);
-                //t1_samples.add(t2);
-                hostOrder.add(thisHost);
+                //t1_samples.add(currentTime);
+                t1_samples.add(t2);
+
                 //System.out.println(thisHost+" added t2 " + t2 + " at " + currentTime);
             }
-            ck.put(peer, currentTime);
-            hasMetAnyNode.put(thisHost, true); //tandai bahwa sudah pernah bertemu siapa pun
-            this.coupledNodesWithTime.put(thisHost, ck);
-
-            // System.out.println("sample t1 "+ t1_samples);
-            // System.out.println("sample t2 "+ t2_samples);
-            //  System.out.println("coupled node dari "+ thisHost +" => "+ck);
-
+        coupledNodesWithTime.put(peer, currentTime);
         }
+
+        //System.out.println("sample t1 "+ t1_samples);
+        //System.out.println("sample t2 "+ t2_samples);
+        //  System.out.println("coupled node dari "+ thisHost +" => "+ck);
+
     }
 
     @Override
@@ -133,118 +119,111 @@ public class SnWskripsi_AR extends ActiveRouter implements InterContactTime {
         DTNHost peer = con.getOtherNode(myHost);
         // System.out.println("Connection down " + myHost + " dan " + peer);
 
+        if (!lastContactTime.containsKey(peer)) {
+            lastContactTime.put(peer, SimClock.getTime());
+        } else {
+            lastContactTime.put(peer, SimClock.getTime());
+        }
         if (!lastContactTime.containsKey(myHost)) {
             lastContactTime.put(myHost, SimClock.getTime());
         } else {
-            this.lastContactTime.replace(myHost, SimClock.getTime());
+            lastContactTime.put(myHost, SimClock.getTime());
         }
-        // System.out.println("Map connection down "+ lastContactTime);
-        this.estimatedM = countingNumberOfNodes();
-    }
 
+        this.estimatedM = countingNumberOfNodes();
+        //System.out.println("Estimasi dari "+getHost()+": "+estimatedM);
+    }
 
     private double countingNumberOfNodes() {
 
         if (t1_samples.isEmpty() || t2_samples.isEmpty()) {
             return estimatedM;
         }
-        //   System.out.println("Sample t1: "+ t1_samples);
-        //  System.out.println("Sample t2: "+ t2_samples);
+        //System.out.println("Sample t1: "+ t1_samples);
+        //System.out.println("Sample t2: "+ t2_samples);
 
         //hitung rata-rata T1 dan T2
         double avgT1 = calculateAverage(t1_samples);
         double avgT2 = calculateAverage(t2_samples);
 
-        // System.out.println("Avg t1: " + avgT1);
-        //  System.out.println("Avg t2: " + avgT2);
+        //System.out.println("Avg t1: " + avgT1);
+        //System.out.println("Avg t2: " + avgT2);
 
         double denominator = (avgT2 - (2 * avgT1));
         if (Math.abs(denominator) < 1e-6) {
             return estimatedM;
         }
 
-        //estimasi M pake rumus
-
-        double currentM = (((2 * avgT2) - (3 * avgT1)) / (denominator));
-        //  int currentM = (int) (((2 * avgT2) - (3 * avgT1)) / (denominator));
-        //currentM = Math.max(1, currentM); //pastikan tidak negatif
+        int currentM = (int) (((2 * avgT2) - (3 * avgT1)) / (denominator));
+        currentM = Math.max(1, currentM); //pastikan tidak negatif
         //System.out.println("currentM: " + currentM);
 
         // System.out.println("estimatedM : " + estimatedM);
-        //update estimasi dengan running average
         if (this.estimatedM == 0) {
-            this.estimatedM = currentM; // Inisialisasi pertama
+            this.estimatedM = currentM;
         } else {
-            this.estimatedM = ((alpha * estimatedM) + (1 - alpha) * currentM);
+            this.estimatedM = ((alpha * estimatedM) + (1 - alpha) * currentM);  //running average
         }
+
         //System.out.println("estimatedM dari " + getHost() + ": " + estimatedM + " at time: " + SimClock.getTime());
         return this.estimatedM;
     }
 
-    //    private int countingNumberOfNodes() {
-//        // Pastikan data cukup untuk estimasi
-//        if (t1_samples.isEmpty() || t2_samples.isEmpty() || hostOrder.size() < t1_samples.size()) {
-//            return estimatedM;
+//private double countingNumberOfNodes() {
+//    if (t1_samples.isEmpty() ) {
+//        return estimatedM;
+//    }
+//    int totalNode = 100;
+//    //List<Double> t1List = t1_samples;
+//    int n = t1_samples.size();
+//    double t1_hat = 0.0;
+//    int ck = coupledNodesWithTime.size();
+//
+//    //hitung rata-rata berbobot untuk T1
+//    for (int k = 0; k < n; k++) {
+//        double T1k = t1_samples.get(k);
+//
+//        if ((totalNode - 1) > 0) {
+//            double weight = (double) (totalNode - ck) / (totalNode - 1);
+//            t1_hat += weight * T1k;
 //        }
+//    }
+//    t1_hat /= n;
 //
-//        int n = t1_samples.size();
-//        double t1_hat = 0.0;
-//
-//        // Hitung rata-rata berbobot untuk T1
-//        for (int k = 0; k < n; k++) {
-//            double T1k = t1_samples.get(k);
-//            DTNHost host = hostOrder.get(k);
-//            List<DTNHost> coupled = coupledNode.getOrDefault(host, new ArrayList<>());
-//            int ck = coupled.size();
-//
-//            if ((totalNode - 1) > 0) {
-//                double weight = (double) (totalNode - ck) / (totalNode - 1);
-//                t1_hat += weight * T1k;
-//            }
-//        }
-//        t1_hat /= n;
-//
-//        // Hitung rata-rata berbobot untuk T2
-//        double t2_hat = 0.0;
-//        for (int k = 1; k < n; k++) {
-//            double T1_prev = t1_samples.get(k - 1);
-//            double T1_curr = t1_samples.get(k);
-//            DTNHost host_prev = hostOrder.get(k - 1);
-//            DTNHost host_curr = hostOrder.get(k);
-//
-//            int ck_prev = coupledNode.getOrDefault(host_prev, new ArrayList<>()).size();
-//            int ck_curr = coupledNode.getOrDefault(host_curr, new ArrayList<>()).size();
-//
-//            double term1 = (totalNode - ck_prev) / (double) (totalNode - 1);
-//            double term2 = (totalNode - ck_curr) / (double) (totalNode - 2);
-//
-//            t2_hat += (term1 * T1_prev + term2 * T1_curr);
-//        }
-//        t2_hat /= (n - 1);
-//
-//        // Estimasi jumlah node M
-//        double denominator = t2_hat - (2 * t1_hat);
-//
-//        if (Math.abs(denominator) < 1e-6) {
-//            return estimatedM;  // hindari pembagian dengan nol
-//        }
-//
-//        int currentM = (int) (((2 * t2_hat) - (3 * t1_hat)) / denominator);
-//       // System.out.println("CurrentM: "+currentM);
-//        // currentM = Math.max(2, currentM);  // batas bawah minimal 2 node
-//
-//        // Perbarui dengan running average
-//        if (this.estimatedM == 0) {
-//            this.estimatedM = currentM;
-//        } else {
-//            this.estimatedM = (int) ((alpha * estimatedM) + (1 - alpha) * currentM);
-//        }
+//    //hitung rata-rata berbobot untuk T2
+//    double t2_hat = 0.0;
+//    for (int k = 1; k < n; k++) {
+//        double T1_prev = t1_samples.get(k - 1);
+//        double T1_curr = t1_samples.get(k);
 //
 //
-//         //System.out.println("estimatedM (after running avg): " + estimatedM);
-//        return this.estimatedM;
+//        double term1 = (totalNode - ck-1) / (double) (totalNode - 1);
+//        double term2 = (totalNode - ck) / (double) (totalNode - 2);
+//
+//        t2_hat += (term1 * T1_prev + term2 * T1_curr);
+//    }
+//    t2_hat /= (n - 1);
+//
+//    // Estimasi jumlah node M
+//    double denominator = t2_hat - (2 * t1_hat);
+//
+//    if (Math.abs(denominator) < 1e-6) {
+//        return estimatedM;  // hindari pembagian dengan nol
 //    }
 //
+//    int currentM = (int) (((2 * t2_hat) - (3 * t1_hat)) / denominator);
+//
+//    // Perbarui dengan running average
+//    if (this.estimatedM == 0) {
+//        this.estimatedM = currentM;
+//    } else {
+//        this.estimatedM = (int) ((alpha * estimatedM) + (1 - alpha) * currentM);
+//    }
+//
+//   // System.out.println("hasil estimasi:"+estimatedM);
+//    return this.estimatedM;
+//}
+
     private double calculateAverage(List<Double> samples) {
         double sum = 0;
         for (double sample : samples) {
@@ -263,11 +242,13 @@ public class SnWskripsi_AR extends ActiveRouter implements InterContactTime {
         addToMessages(msg, true);
         return true;
     }
+
     @Override
     public int receiveMessage(Message m, DTNHost from) {
 
         return super.receiveMessage(m, from);
     }
+
     @Override //shouldSaveReceivedMessage
     public Message messageTransferred(String id, DTNHost from) {
         Message msg = super.messageTransferred(id, from);
@@ -276,7 +257,7 @@ public class SnWskripsi_AR extends ActiveRouter implements InterContactTime {
 
         if (nrofCopies == null) {
             throw new IllegalStateException("Not a S'n'W message: " + msg);
-        }
+         }
         // assert nrofCopies != null : "Not a SnW message: " + msg;
 
         if (isBinary) {
@@ -314,26 +295,7 @@ public class SnWskripsi_AR extends ActiveRouter implements InterContactTime {
     @Override
     public void update() {
         super.update();
-        for (Map<DTNHost, Double> coupledMap : coupledNodesWithTime.values()) {
-            Iterator<Map.Entry<DTNHost, Double>> iterator = coupledMap.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<DTNHost, Double> entry = iterator.next();
-                if (SimClock.getTime() - entry.getValue() > intervalTime) {
-                    iterator.remove();
-                }
-            }
-        }
-        //System.out.println("update: "+SimClock.getTime());
-        estimatedM = countingNumberOfNodes();
 
-        // if (SimClock.getTime() - lastInterval == 1800) {
-        //    lastInterval = SimClock.getTime();
-        //System.out.println("waktu: " + SimClock.getTime() + " hasil estimasi di update: " + estimatedM);
-
-        //  t1_samples.clear();
-        //  t2_samples.clear();
-        //    coupledNode.clear();
-        //  }
         if (!hasMoved) {
             Coord currentLoc = getHost().getLocation();
 
@@ -342,9 +304,20 @@ public class SnWskripsi_AR extends ActiveRouter implements InterContactTime {
             } else if (!currentLoc.equals(initialLocation)) {
                 movementStartTime = SimClock.getTime();
                 hasMoved = true;
+
                 // System.out.println(getHost() + " mulai bergerak pada waktu: " + movementStartTime);
             }
         }
+       // this.estimatedM = countingNumberOfNodes();
+        Iterator<Map.Entry<DTNHost, Double>> it = coupledNodesWithTime.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<DTNHost, Double> entry = it.next();
+            if (SimClock.getTime() - entry.getValue() >= mixingTime) {
+                it.remove();
+            }
+        }
+
+
 
         if (!canStartTransfer() || isTransferring()) {
             return; // nothing to transfer or is currently transferring
@@ -383,8 +356,16 @@ public class SnWskripsi_AR extends ActiveRouter implements InterContactTime {
 
     @Override
     public double getEstimation() {
+        //   System.out.println(getHost()+" estimasi: "+estimatedM);
         return this.estimatedM;
+
     }
+
+
+
+
+
+
 }
 
 

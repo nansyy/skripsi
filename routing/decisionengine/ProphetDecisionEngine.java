@@ -130,7 +130,12 @@ public class ProphetDecisionEngine implements RoutingDecisionEngine
 	{
 		return m.getTo() == hostReportingOld;
 	}
-	
+
+	@Override
+	public void update(DTNHost host) {
+
+	}
+
 	private ProphetDecisionEngine getOtherProphetDecisionEngine(DTNHost host)
 	{
 		MessageRouter otherRouter = host.getRouter();

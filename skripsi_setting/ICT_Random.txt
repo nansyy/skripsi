@@ -1,11 +1,11 @@
 # Scenario simulasi estimasi jumlah node menggunakan metode Inter-Contact Time
-Scenario.name = ICT_Random
+Scenario.name = ICT_Random AR
 Scenario.simulateConnections = true
 Scenario.updateInterval = 1
 
 # Waktu simulasi - 2 hari
 Scenario.endTime = 172800
-
+Scenario.worldSize = 1000, 1000
 
 btInterface.type = SimpleBroadcastInterface
 btInterface.transmitSpeed = 250k
@@ -16,13 +16,10 @@ Scenario.nrofHostGroups = 1
 # Pengaturan routing
 Group.router = skripsi.SnWskripsi_AR
 SnWskripsi_AR.binaryMode = true
-#Group.router = DecisionEngineRouter
-#DecisionEngineRouter.decisionEngine = skripsi.EstimasiNode
-#DecisionEngineRouter.binaryMode = true
-#DecisionEngineRouter.nrofHosts = 100
 
 # Definisi node (misalnya untuk kendaraan dan manusia)
-Group.movementModel = RandomWaypoint
+Group.movementModel = RandomWalk
+Group.bufferSize = 10M
 
 # Pengaturan tambahan
 Group.nrofInterfaces = 1
@@ -31,10 +28,11 @@ Group.msgTtl = 1440
 Group.bufferSize = 10M
 Group.nrofHosts = 100
 Group.waitTime = 10, 30
-Group.speed = 5.5, 10.0
+Group.speed = 0.5, 1.5
 #Group.nodeLocation = 10, 10
-Group.transmitRange = 100
+Group.transmitRange = 10
 Group1.groupID = node
+Group1.okMaps = 1
 
 # Event Message creation parameters
 Events.nrof = 1
@@ -47,15 +45,33 @@ Events1.hosts = 0,99
 
 ## Movement model
 MovementModel.rngSpeed = 1
-MovementModel.worldSize = 1000, 1000
+MovementModel.worldSize = 1500, 1500
 MovementModel.warmup = 1000
-
+MapBasedMovement.mapFile1 = data/HelsinkiMedium/roads.wkt
 
 # Statistik output
 Report.nrofReports = 2
-Report.reportDir = reports/skripsi
+Report.reportDir = reports/skripsi/random ar
 
 Report.report1 = skripsi.AvgConvergenceCounting
-Report.report2 = skripsi.MovementStartTimeReport
+Report.report2 = MessageStatsReport
+#Report.report2 = skripsi.MovementStartTimeReport
 #Report.report3 = skripsi.ConvergenceTime
-#Report.report4 = skripsi.Residu
+
+
+
+## GUI settings
+
+# GUI underlay image settings
+GUI.UnderlayImage.fileName = data/helsinki_underlay.png
+# Image offset in pixels (x, y)
+GUI.UnderlayImage.offset = 64, 20
+# Scaling factor for the image
+GUI.UnderlayImage.scale = 4.75
+# Image rotation (radians)
+GUI.UnderlayImage.rotate = -0.015
+
+# how many events to show in the log panel (default = 30)
+#GUI.EventLogPanel.nrofEvents = 200
+# Regular Expression log filter (see Pattern-class from the Java API for RE-matching details)
+#GUI.EventLogPanel.REfilter = .*p[1-9]<->p[1-9]$
